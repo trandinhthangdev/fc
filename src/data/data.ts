@@ -1,0 +1,16 @@
+export const data_transcripts = {
+  thien_ly_oi: require('./transcripts/thien_ly_oi.json'),
+  cuoi_cung_thi: require('./transcripts/cuoi_cung_thi.json'),
+  ve_ben_anh: require('./transcripts/ve_ben_anh.json'),
+  hong_nhan: require('./transcripts/hong_nhan.json'),
+  hoa_hai_duong: require('./transcripts/hoa_hai_duong.json'),
+  dom_dom: require('./transcripts/dom_dom.json'),
+  chung_ta_roi_se_hanh_phuc: require('./transcripts/chung_ta_roi_se_hanh_phuc.json'),
+  xoa_ten_anh_di: require('./transcripts/xoa_ten_anh_di.json'),
+  ngoi_sao_co_don: require('./transcripts/la_1_thang_con_trai.json'),
+  la_1_thang_con_trai: require('./transcripts/thien_ly_oi.json'),
+  trinh_gia: require('./transcripts/trinh_gia.json'),
+  tu_noi_toi_sinh_ra: require('./transcripts/tu_noi_toi_sinh_ra.json'),
+  laylalay: require('./transcripts/laylalay.json'),
+  thuc_tinh_di: require('./transcripts/thuc_tinh_di.json'),
+};

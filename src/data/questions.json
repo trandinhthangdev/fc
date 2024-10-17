@@ -1,0 +1,132 @@
+[
+  {
+    "question": "Quê Jack ở đâu?",
+    "answers": [
+      "Xã Thạnh Ngãi,Huyện Mỏ Cày Bắc ,Tỉnh Bến Tre",
+      "Xã Long Thới ,Huyện Chợ Lách Tỉnh Bến Tre",
+      "Xã Phú Túc,Huyện Châu Thành,Tỉnh Bến Tre",
+      "Xã Ngãi Dăng Huyện Mỏ Cày Nam,Tỉnh Bến Tre"
+    ],
+    "correct_index": 3,
+    "point": 10
+  },
+  {
+    "question": "Bạn nhớ ngày sinh của Jack chứ?",
+    "answers": ["12/4/1997", "21/4/1997", "11/4/1997", "20/4/1997"],
+    "correct_index": 0,
+    "point": 10
+  },
+  {
+    "question": "Jack từng theo học tại...?",
+    "answers": [
+      "Trường Cao đẳng Văn hóa Nghệ thuật TP.HCM",
+      "Trường Cao đẳng Bến Tre",
+      "Trường Đại học Sân khấu - Điện ảnh TP.HCM",
+      "Trường Đại học Nguyễn Tất Thành"
+    ],
+    "correct_index": 1,
+    "point": 20
+  },
+  {
+    "question": "Nhóm nhạc Jack từng tham gia là...?",
+    "answers": ["GR5", "RG5", "G5R", "R5G"],
+    "correct_index": 2,
+    "point": 10
+  },
+  {
+    "question": "Trước khi đặt chân vào sự nghiệp ca hát, Jack từng hoạt động với vai trò...?",
+    "answers": [
+      "Giáo viên âm nhạc",
+      "Producer",
+      "Nhân viên văn phòng",
+      "Trợ giảng tại Trung tâm dạy thanh nhạc"
+    ],
+    "correct_index": 0,
+    "point": 20
+  },
+  {
+    "question": "Bài hát đầu tiên Jack góp giọng là...?",
+    "answers": ["Mẹ ơi", "Để đó anh lo", "Hồng Nhan", "Giai điệu miền Tây"],
+    "correct_index": 3,
+    "point": 10
+  },
+  {
+    "question": "Nghệ danh Jack được lấy cảm hứng từ...?",
+    "answers": [
+      "Michael Jackson",
+      "Jackie Chan",
+      "Jack Grealish",
+      "Cả 3 đều sai"
+    ],
+    "correct_index": 1,
+    "point": 10
+  },
+  {
+    "question": "MV được ra mắt ngay đúng dịp sinh nhật của Jack là...?",
+    "answers": [
+      "Đom Đóm",
+      "Là một thằng con trai",
+      "Hoa hải đường",
+      "LAYLALAY"
+    ],
+    "correct_index": 3,
+    "point": 10
+  },
+  {
+    "question": "Đâu là giải thưởng quốc tế đầu tiên Jack được gọi tên?",
+    "answers": [
+      "Giải thưởng âm nhạc Châu Âu (MTV EMA)",
+      "Giải truyền hình Châu Á (ATA)",
+      "World Music Awards",
+      "Mnet Asia Music Awards (MAMA)"
+    ],
+    "correct_index": 0,
+    "point": 10
+  },
+  {
+    "question": "Giải thưởng quốc tế gần nhất của Jack là...?",
+    "answers": [
+      "Giải thưởng âm nhạc Châu Âu (MTV EMA)",
+      "Giải truyền hình Châu Á (ATA)",
+      "World Music Awards",
+      "Mnet Asia Music Awards (MAMA)"
+    ],
+    "correct_index": 1,
+    "point": 10
+  },
+  {
+    "question": "MV hiện đang nắm giữ số lượt xem cao nhất trên kênh Youtube J97 là...?",
+    "answers": [
+      "Là một thằng con trai",
+      "Đom Đóm",
+      "Hoa Hải Đường",
+      "LAYLALAY"
+    ],
+    "correct_index": 2,
+    "point": 10
+  },
+  {
+    "question": "J97 sinh ngày tháng bao nhiêu !?",
+    "answers": ["15/11/1997", "09/5/1997", "12/4/1997", "8/9/1997"],
+    "correct_index": 2,
+    "point": 10
+  },
+  {
+    "question": "Hiện giờ J97 đã ra đc bao nhiêu M/V trên trang youtube J97",
+    "answers": ["2MV", "1MV", "3MV", "5MV"],
+    "correct_index": 2,
+    "point": 10
+  },
+  {
+    "question": "J97 đã từng ở công ty nào !?",
+    "answers": ["ICM", "M-TP", "Đông Tây Promotion", "M&T Pictures"],
+    "correct_index": 0,
+    "point": 20
+  },
+  {
+    "question": "Bản Demo nào của Jack nhiều view , tương tác nhất !?",
+    "answers": ["Thiên Lí ơi!", "Đom Đóm", "Việt Nam tôi", "Không biết"],
+    "correct_index": 1,
+    "point": 10
+  }
+]
