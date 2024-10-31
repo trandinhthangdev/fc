@@ -1,50 +1,78 @@
 import axios from 'axios';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useTheme} from '../../contexts/ThemeContext';
+import TrackPlayer, {useProgress} from 'react-native-track-player';
+import _ from 'lodash';
+import {useAppSelector} from '../../redux/store';
+import {useDispatch} from 'react-redux';
+import {addScripts} from '../../redux/features/playlistSlice';
+import {PLAYLIST_SCRIPTS_URL} from '../../utils/constants';
+import StorageService from '../../db/StorageService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const ScriptRunning = ({currentTime, onSliderValueChange, code}) => {
+const ScriptRunning = ({code}: {code: string}) => {
+  const {position} = useProgress();
+
   const {paletteColor} = useTheme();
   const itemRefs = useRef([]);
   const scrollViewRef = useRef();
   const [scrollHeight, setScrollHeight] = useState(0);
-  const [heights, setHeights] = useState([]);
-  const [transcripts, setTranscripts] = useState([]);
-  const link = `https://res.cloudinary.com/dxdbwpnnd/raw/upload/v1727587349/jack/scripts/${code}.json`;
+  const [scrollY, setScrollY] = useState(0); // Keep track of scroll position
+  const dispatch = useDispatch();
+  const {scripts} = useAppSelector(state => state.playlist);
 
   useEffect(() => {
-    if (transcripts.length === 0)
-      axios.get(link).then(res => {
-        if (Array.isArray(res.data)) setTranscripts(res.data);
-      });
-  }, []);
-  const setItemHeight = (index, height) => {
-    setHeights(prevHeights => {
-      const newHeights = [...prevHeights];
-      newHeights[index] = height;
-      return newHeights;
-    });
-  };
-  useEffect(() => {
-    const index = transcripts.findLastIndex(
-      item =>
-        currentTime * 1000 >= item.startTime - 200 &&
-        currentTime * 1000 <= item.endTime + 200,
+    if (!scripts.code) {
+      try {
+        (async () => {
+          const res = await axios.get(
+            `${PLAYLIST_SCRIPTS_URL.replace('SONG_ID', code)}`,
+          );
+          if (Array.isArray(res.data)) {
+            dispatch(
+              addScripts({
+                code,
+                data: res.data,
+              }),
+            );
+          }
+        })();
+      } catch (e) {}
+    }
+  }, [code]);
+
+  const transcripts = useMemo(() => scripts[code] ?? [], [scripts, code]);
+
+  const currentIndexActive = useMemo(() => {
+    return _.findLastIndex(
+      transcripts,
+      transcript =>
+        position * 1000 >= transcript.startTime - 1000 &&
+        position * 1000 <= transcript.endTime + 500,
     );
-    // console.log('index', index);
-    if (index !== -1) scrollToIndex(index);
-  }, [currentTime]);
+  }, [position, transcripts]);
 
-  const scrollToIndex = index => {
-    const scrollPosition = heights
-      .slice(0, index)
-      .reduce((total, height) => total + height, 0);
-    scrollViewRef.current?.scrollTo({
-      y: scrollPosition,
-      animated: true,
-    });
-  };
+  useEffect(() => {
+    if (currentIndexActive !== -1 && itemRefs.current[currentIndexActive]) {
+      itemRefs.current[currentIndexActive].measureLayout(
+        scrollViewRef.current,
+        (x, y, width, height) => {
+          if (
+            y < scrollY ||
+            (y + height > scrollY + scrollHeight && scrollViewRef.current)
+          ) {
+            scrollViewRef.current.scrollTo({
+              y: y - scrollHeight / 2 + height / 2,
+              animated: true,
+            });
+          }
+        },
+      );
+    }
+  }, [currentIndexActive, scrollY, scrollHeight, transcripts]);
+
   return (
     <ScrollView
       style={{
@@ -57,31 +85,39 @@ const ScriptRunning = ({currentTime, onSliderValueChange, code}) => {
       onLayout={event => {
         const {height} = event.nativeEvent.layout;
         setScrollHeight(height);
-      }}>
+      }}
+      onScroll={event => {
+        setScrollY(event.nativeEvent.contentOffset.y);
+      }}
+      scrollEventThrottle={16} // For smooth scrolling
+    >
       {transcripts.map((transcript, index) => {
         return (
           <TouchableOpacity
             key={index}
             ref={ref => (itemRefs.current[index] = ref)}
             onPress={() => {
-              onSliderValueChange(transcript.startTime / 1000);
+              TrackPlayer.seekTo(transcript.startTime / 1000);
             }}
-            onLayout={event => {
-              const {height} = event.nativeEvent.layout;
-              setItemHeight(index, height);
-            }}>
+            // onLayout={event => {
+            //   const {height} = event.nativeEvent.layout;
+            //   setItemHeight(index, height);
+            // }}
+          >
             <Text
               style={{
                 color: paletteColor.text,
-                fontSize: 16,
                 marginVertical: 2,
                 paddingVertical: 2,
-                ...(currentTime * 1000 >= transcript.startTime - 500 &&
-                currentTime * 1000 <= transcript.endTime + 200
+                ...(currentIndexActive === index
                   ? {
                       fontWeight: 'bold',
+                      fontSize: 15,
                     }
-                  : {}),
+                  : {
+                      opacity: 0.6,
+                      fontSize: 15,
+                    }),
               }}>
               {transcript.text}
             </Text>

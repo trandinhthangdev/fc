@@ -1,38 +1,56 @@
-import {Animated, StyleSheet, View} from 'react-native';
+import {Animated, StyleSheet, Text, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {useAppSelector} from '../redux/store';
+import {useAppSelector} from '../../redux/store';
 import {useDispatch} from 'react-redux';
 import {
   addSongs,
+  ELoop,
   setLoop,
-  setSongPlaying,
   setSuffle,
   Song,
-} from '../redux/features/playlistSlice';
-import PlaySong from '../components/Playlist/PlaySong';
-import {useTheme} from '../contexts/ThemeContext';
-import SongItem from '../components/Playlist/SongItem';
+} from '../../redux/features/playlistSlice';
+import PlaySong from '../../components/Playlist/PlaySong';
+import {useTheme} from '../../contexts/ThemeContext';
+import SongItem from '../../components/Playlist/SongItem';
 import axios from 'axios';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import db from './../db/Database';
-import {LAST_UPDATED_PLAYLIST_URL, PLAYLIST_URL} from '../utils/constants';
+import db from '../../db/Database';
+import {LAST_UPDATED_PLAYLIST_URL, PLAYLIST_URL} from '../../utils/constants';
 import _ from 'lodash';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import StorageService from '../db/StorageService';
+import StorageService from '../../db/StorageService';
+import {addTracks, setupPlayer} from '../trackPlayerServices';
+import TrackPlayer, {
+  Event,
+  RepeatMode,
+  useActiveTrack,
+  State,
+} from 'react-native-track-player';
+import {usePlaylist} from '../../hooks/usePlaylist';
+import LayoutApp from '../../components/layout/LayoutApp';
+import {useTranslation} from 'react-i18next';
 
 const LAST_FETCH_CODE = 'lastFetchCode';
 const NUMBER_PAGE = 20;
+
 const Playlist = () => {
   const scrollRef = useRef<ScrollView>(null);
+  const currentSong = useActiveTrack();
+  const {t} = useTranslation();
   const {songs, shuffle, loop} = useAppSelector(state => state.playlist);
+  const {onPlaySong} = usePlaylist({});
   const playlistSettings = useMemo(() => ({shuffle, loop}), [shuffle, loop]);
-
   useEffect(() => {
     (async () => {
       const storage = StorageService.getInstance();
       const playlistSettings = await storage.getItem('playlistSettings');
       if (playlistSettings) {
         dispatch(setSuffle(!!playlistSettings?.shuffle));
+        TrackPlayer.setRepeatMode(
+          playlistSettings?.loop === ELoop.loop_once
+            ? RepeatMode.Track
+            : RepeatMode.Queue,
+        );
         dispatch(setLoop(playlistSettings?.loop));
       }
     })();
@@ -60,6 +78,8 @@ const Playlist = () => {
     getLastFetchCodeInit();
   }, []);
   const getLastFetchCodeInit = async () => {
+    const isSetup = await setupPlayer();
+    console.log('isSetup', isSetup);
     const data = await AsyncStorage.getItem(LAST_FETCH_CODE);
     console.log('data', data);
     if (data) {
@@ -79,13 +99,16 @@ const Playlist = () => {
         loadMore: pageItems.length === NUMBER_PAGE,
       });
     }
+    console.log('songs.length', songs.length);
+    if (songs.length) {
+      console.log((shuffle ? _.shuffle(songs) : songs)[0]);
+      addTracks(shuffle ? _.shuffle(songs) : songs);
+    }
   }, [songs]);
-  // console.log(LAST_UPDATED_PLAYLIST_URL);
   const getLastFetchCode = async (init?: string) => {
     const res = await axios.get(
       `${LAST_UPDATED_PLAYLIST_URL}?time=${Date.now()}`,
     );
-    console.log(res.data);
     if (!res.data?.last_updated_code) {
       return;
     }
@@ -101,7 +124,6 @@ const Playlist = () => {
   const getSongs = async () => {
     try {
       const res = await axios.get(`${PLAYLIST_URL}?time=${Date.now()}`);
-      console.log(res.data);
       if (Array.isArray(res.data)) {
         let songs_init = _.uniqBy(
           res.data.map(song => ({
@@ -154,44 +176,49 @@ const Playlist = () => {
     );
   };
   return (
-    <View
-      style={{
-        ...styles.container,
-        backgroundColor: paletteColor.bg,
-      }}>
-      <ScrollView
+    <LayoutApp title={t('tab.playlist')}>
+      <View
         style={{
-          flex: 1,
-        }}
-        ref={scrollRef}
-        onScroll={handleScroll}>
-        {data.items.length === 0 && (
-          <>
-            {new Array(10).fill(1).map((item, index) => (
-              <React.Fragment key={index}>{showSkeletonItem()}</React.Fragment>
-            ))}
-          </>
-        )}
-        {data.items.map(song => {
-          return (
-            <SongItem
-              key={song.code}
-              song={song}
-              onPlay={() => {
-                dispatch(setSongPlaying(song));
-              }}
-            />
-          );
-        })}
-        {isLoading && (
-          <>
-            {showSkeletonItem()}
-            {showSkeletonItem()}
-          </>
-        )}
-      </ScrollView>
-      <PlaySong />
-    </View>
+          ...styles.container,
+          backgroundColor: paletteColor.bg,
+        }}>
+        <ScrollView
+          style={{
+            flex: 1,
+          }}
+          ref={scrollRef}
+          onScroll={handleScroll}>
+          {data.items.length === 0 && (
+            <>
+              {new Array(10).fill(1).map((item, index) => (
+                <React.Fragment key={index}>
+                  {showSkeletonItem()}
+                </React.Fragment>
+              ))}
+            </>
+          )}
+          {data.items.map(song => {
+            return (
+              <SongItem
+                key={song.code}
+                song={song}
+                onPlay={() => {
+                  onPlaySong(song);
+                }}
+                isActive={song.code === currentSong?.id}
+              />
+            );
+          })}
+          {isLoading && (
+            <>
+              {showSkeletonItem()}
+              {showSkeletonItem()}
+            </>
+          )}
+        </ScrollView>
+        {currentSong && <PlaySong />}
+      </View>
+    </LayoutApp>
   );
 };
 

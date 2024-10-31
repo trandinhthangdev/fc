@@ -1,140 +1,98 @@
-import {
-  Animated,
-  Image,
-  Platform,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  View,
-} from 'react-native';
-import {
-  COLLECTION_PHOTO_URL,
-  screenHeight,
-  screenWidth,
-} from '../utils/constants';
+import {Animated, StyleSheet, View, TouchableOpacity} from 'react-native';
+import {screenHeight, screenWidth} from '../utils/constants';
 import {useEffect, useRef, useState} from 'react';
 import AppIcon from '../components/common/AppIcon';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {handleSetWallpaper} from '../utils/functions';
 import {useNavigation} from '@react-navigation/native';
 import db from './../db/Database';
 import {Photo} from '../redux/features/collectionSlice';
-import Share from 'react-native-share';
 import {useTheme} from '../contexts/ThemeContext';
+import PhotoView from '../components/Collection/PhotoView';
 
 const PhotoPreview = ({route}) => {
-  const isIOS = Platform.OS === 'ios';
   const {paletteColor} = useTheme();
   const navigation = useNavigation();
   const {item, onRefreshPhoto} = route.params;
-  const [photo, setPhoto] = useState<Photo>(item);
-  const onToggleLove = async () => {
-    const currentDateTime = new Date().toISOString();
-    onRefreshPhoto({
-      ...photo,
-      loved_at: photo.loved_at ? null : currentDateTime,
-    });
-    setPhoto(prev => ({
-      ...prev,
-      loved_at: prev.loved_at ? null : currentDateTime,
-    }));
-    await db.toggleLove(photo.url);
-    if (photo.loved_at) {
-      ToastAndroid.show('Bạn đã bỏ hình ảnh khỏi mục yêu thích', 2000);
-    } else {
-      ToastAndroid.show('Bạn đã thêm hình ảnh vào mục yêu thích', 2000);
-    }
-  };
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const scrollViewRef = useRef(null);
+  const [items, setItems] = useState([item]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [isEnd, setIsEnd] = useState(false);
 
-  const onShare = () => {
-    try {
-      Share.open({
-        url: COLLECTION_PHOTO_URL.replace('PHOTO_ID', item.url),
-      });
-    } catch (e) {
-      console.log('e', e);
+  const loadMore = async (nbPages: number) => {
+    setIsLoading(true);
+    const data = await db.getRandomPhotos(
+      nbPages ?? 10,
+      items.map(item => item.url),
+    );
+    setItems(prev => [...prev, ...data]);
+    setIsLoading(false);
+    if (data.length < (nbPages ?? 10)) {
+      setIsEnd(true);
     }
   };
+  useEffect(() => {
+    loadMore(9);
+  }, []);
+  const handleScroll = event => {
+    Animated.event([{nativeEvent: {contentOffset: {x: scrollX}}}], {
+      useNativeDriver: false,
+    });
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.floor((contentOffsetX + 1) / screenWidth);
+    if (Math.ceil((index + 5) / 10) > page && !isLoading && !isEnd) {
+      setPage(prev => prev + 1);
+    }
+  };
+  useEffect(() => {
+    if (page > 1) {
+      loadMore(10);
+    }
+  }, [page]);
   return (
     <View
       style={{
-        ...styles.container,
-        backgroundColor: paletteColor.bg,
+        padding: 5,
+        height: '100%',
+        width: screenWidth,
+        position: 'relative',
       }}>
-      <Image
-        style={styles.photo}
-        source={{
-          uri: COLLECTION_PHOTO_URL.replace('PHOTO_ID', item.url),
+      <TouchableOpacity
+        style={{
+          ...styles.back_btn,
+          backgroundColor: paletteColor.text,
         }}
-      />
-      <View style={styles.layer}>
-        <TouchableOpacity
-          style={{...styles.back_btn, backgroundColor: paletteColor.text}}
-          onPress={() => {
-            navigation.goBack();
-          }}>
-          <AppIcon
-            name="arrow-back"
-            type="Ionicons"
-            size={24}
-            color={paletteColor.bg}
-          />
-        </TouchableOpacity>
-      </View>
-      <View style={{...styles.action_bar, backgroundColor: paletteColor.text}}>
-        {/* <TouchableOpacity
-          style={styles.action_btn}
-          onPress={() => onToggleLove()}>
-          <AppIcon
-            name="download"
-            type="Ionicons"
-            size={24}
-            color={'#001F3F'}
-          />
-          <Text style={styles.action_btn_text}>Tải về</Text>
-        </TouchableOpacity> */}
-        <TouchableOpacity style={styles.action_btn} onPress={() => onShare()}>
-          <AppIcon
-            name={'share-social'}
-            type="Ionicons"
-            size={24}
-            color={paletteColor.bg}
-          />
-          <Text style={{...styles.action_btn_text, color: paletteColor.bg}}>
-            Chia sẻ
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.action_btn}
-          onPress={() => onToggleLove()}>
-          <AppIcon
-            name={photo.loved_at ? 'heart' : 'heart-outline'}
-            type="Ionicons"
-            size={24}
-            color={paletteColor.bg}
-          />
-          <Text style={{...styles.action_btn_text, color: paletteColor.bg}}>
-            Yêu thích
-          </Text>
-        </TouchableOpacity>
-        {!isIOS && (
-          <TouchableOpacity
-            onPress={() => {
-              handleSetWallpaper(photo.url);
-            }}
-            style={styles.action_btn}>
-            <AppIcon
-              name="wallpaper"
-              type="MaterialCommunityIcons"
-              size={24}
-              color={paletteColor.bg}
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <AppIcon
+          name="arrow-back"
+          type="Ionicons"
+          size={24}
+          color={paletteColor.bg}
+        />
+      </TouchableOpacity>
+      <Animated.ScrollView
+        ref={scrollViewRef}
+        scrollEventThrottle={16}
+        onScroll={event => handleScroll(event)}
+        horizontal
+        pagingEnabled
+        style={{
+          width: screenWidth,
+          height: screenHeight,
+        }}
+        showsHorizontalScrollIndicator={false}>
+        {items.map((item, index) => {
+          return (
+            <PhotoView
+              key={index}
+              photo={item}
+              onRefreshPhoto={onRefreshPhoto}
             />
-            <Text style={{...styles.action_btn_text, color: paletteColor.bg}}>
-              Đặt hình nền
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
+          );
+        })}
+      </Animated.ScrollView>
     </View>
   );
 };
@@ -148,17 +106,17 @@ const styles = StyleSheet.create({
     width: screenWidth,
     position: 'relative',
   },
-  layer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    alignItems: 'flex-start',
-    padding: 10,
-  },
+  // layer: {
+  //   position: 'absolute',
+  //   bottom: 0,
+  //   left: 0,
+  //   width: '100%',
+  //   height: '100%',
+  //   alignItems: 'flex-start',
+  //   padding: 10,
+  //   // zIndex: 8,
+  // },
   back_btn: {
-    // backgroundColor: 'rgba(255, 255, 255, 0.8)',
     paddingVertical: 2,
     paddingHorizontal: 20,
     borderRadius: 20,
@@ -168,8 +126,8 @@ const styles = StyleSheet.create({
   photo: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain',
     borderRadius: 20,
+    zIndex: 99999,
   },
   action_bar: {
     position: 'absolute',

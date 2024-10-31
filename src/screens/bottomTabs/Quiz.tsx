@@ -1,8 +1,6 @@
 import {useIsFocused} from '@react-navigation/native';
 import {useEffect, useState} from 'react';
 import {
-  Image,
-  ImageBackground,
   NativeEventEmitter,
   NativeModules,
   Platform,
@@ -12,10 +10,9 @@ import {
   View,
 } from 'react-native';
 import Tts from 'react-native-tts';
-import FirefliesAnimation from '../components/FirefliesAnimation';
-import questions from './../data/questions.json';
-// import FireflyWithWingsAnimation from '../components/FireflyWithWingsAnimation';
-// Install dummy handlers so we don't see the tts warnings
+import questions from '../../data/questions.json';
+import LayoutApp from '../../components/layout/LayoutApp';
+
 const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
 ee.addListener('tts-start', () => {});
 ee.addListener('tts-finish', () => {});
@@ -25,7 +22,7 @@ const Quiz = props => {
   const isFocused = useIsFocused();
   const [currentIndex, setCurrentIndex] = useState(null);
   const [point, setPoint] = useState(0);
-  
+
   useEffect(() => {
     // if (isFocused) playVoice();
   }, [isFocused]);
@@ -50,20 +47,8 @@ const Quiz = props => {
   };
   const question = currentIndex !== null ? questions[currentIndex] : null;
   return (
-    <ImageBackground
-      style={styles.container}
-      source={require('./../assets/bg_quiz.jpg')}>
-      <FirefliesAnimation />
-      <View
-        style={{
-          zIndex: 999,
-          elevation: 999,
-          height: '100%',
-          width: '100%',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-        }}>
+    <LayoutApp title={'Quiz'}>
+      <View>
         {question ? (
           <View
             style={{
@@ -137,7 +122,7 @@ const Quiz = props => {
           </>
         )}
       </View>
-    </ImageBackground>
+    </LayoutApp>
   );
 };
 

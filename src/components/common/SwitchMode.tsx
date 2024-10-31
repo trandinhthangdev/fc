@@ -1,19 +1,51 @@
-// SwitchMode.tsx
-import React from 'react';
-import {View, Text, Switch, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, ToastAndroid} from 'react-native';
 import {EThemeMode, useTheme} from '../../contexts/ThemeContext';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import AppIcon from '../common/AppIcon';
+import {useTranslation} from 'react-i18next';
 
 const SwitchMode: React.FC = () => {
+  const {t} = useTranslation();
   const {themeColor, theme, updateTheme, paletteColor} = useTheme();
+  const [isHide, setIsHide] = useState(false);
 
   const handleToggle = () => {
-    if (theme === EThemeMode.light) updateTheme(EThemeMode.dark);
-    else if (theme === EThemeMode.dark) updateTheme(EThemeMode.device);
-    else updateTheme(EThemeMode.light);
+    setIsHide(true);
+    if (theme === EThemeMode.light) {
+      updateTheme(EThemeMode.dark);
+      ToastAndroid.showWithGravity(
+        t('toast.theme_dark'),
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
+      );
+    } else if (theme === EThemeMode.dark) {
+      updateTheme(EThemeMode.device);
+      ToastAndroid.showWithGravity(
+        t('toast.theme_system'),
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
+      );
+    } else {
+      updateTheme(EThemeMode.light);
+      ToastAndroid.showWithGravity(
+        t('toast.theme_light'),
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
+      );
+    }
   };
+  useEffect(() => {
+    if (isHide) {
+      setTimeout(() => {
+        setIsHide(false);
+      }, 200);
+    }
+  }, [isHide]);
 
+  if (isHide) {
+    return <></>;
+  }
   return (
     <TouchableOpacity
       onPress={() => handleToggle()}
@@ -23,7 +55,7 @@ const SwitchMode: React.FC = () => {
           type="Ionicons"
           name="sunny"
           color={paletteColor.text}
-          size={24}
+          size={16}
         />
       )}
       {theme === EThemeMode.dark && (
@@ -31,7 +63,7 @@ const SwitchMode: React.FC = () => {
           type="Ionicons"
           name="moon"
           color={paletteColor.text}
-          size={24}
+          size={16}
         />
       )}
       {theme === EThemeMode.device && (
@@ -39,7 +71,7 @@ const SwitchMode: React.FC = () => {
           type="Ionicons"
           name="phone-portrait-outline"
           color={paletteColor.text}
-          size={24}
+          size={16}
         />
       )}
     </TouchableOpacity>

@@ -184,7 +184,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({songPlaying}) => {
             style={{
               position: 'absolute',
               left: 0,
-
               borderRadius: 20,
             }}
             onPress={() => {

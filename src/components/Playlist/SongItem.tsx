@@ -9,8 +9,9 @@ import {PLAYLIST_COVER_URL} from '../../utils/constants';
 interface SongItemProps {
   song: Song;
   onPlay: () => void;
+  isActive?: boolean;
 }
-const SongItem = ({song, onPlay}: SongItemProps) => {
+const SongItem = ({song, onPlay, isActive}: SongItemProps) => {
   const {songPlaying} = useAppSelector(state => state.playlist);
   const {themeColor, paletteColor} = useTheme();
   return (
@@ -19,7 +20,7 @@ const SongItem = ({song, onPlay}: SongItemProps) => {
       onPress={() => {
         onPlay();
       }}>
-      {songPlaying?.code === song.code ? (
+      {isActive ? (
         <RunningDisk
           isFullscreen={false}
           imageUri={PLAYLIST_COVER_URL.replace('SONG_ID', song.code)}
@@ -38,7 +39,7 @@ const SongItem = ({song, onPlay}: SongItemProps) => {
         style={{
           ...styles.song_text,
           color: paletteColor.text,
-          ...(songPlaying?.code === song.code ? {color: '#6A9AB0'} : {}),
+          ...(isActive ? {color: '#6A9AB0'} : {}),
         }}>
         {song.name}
       </Text>

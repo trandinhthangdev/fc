@@ -1,23 +1,16 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {
-  Animated,
-  Image,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Text,
-  RefreshControl,
-} from 'react-native';
+import {Animated, StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {COLLECTION_PHOTO_URL, screenWidth} from '../../utils/constants';
 import {useCollection} from '../../hooks/useCollection';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useRef} from 'react';
 import {
   Photo,
   updatePhotoCollection,
 } from '../../redux/features/collectionSlice';
 import {useTheme} from '../../contexts/ThemeContext';
 import {useDispatch} from 'react-redux';
+import FastImage from 'react-native-fast-image';
 
 export enum ETabView {
   tab_all = 'tab_all',
@@ -26,8 +19,9 @@ export enum ETabView {
 const width = screenWidth / 2 - 20;
 interface CollectionGridProps {
   type: ETabView;
+  onPressPhoto?: (photo: Photo) => void;
 }
-const CollectionGrid = ({type}: CollectionGridProps) => {
+const CollectionGrid = ({type, onPressPhoto}: CollectionGridProps) => {
   const route = useRoute();
   const {paletteColor} = useTheme();
   const scrollRef = useRef<ScrollView>(null);
@@ -40,6 +34,10 @@ const CollectionGrid = ({type}: CollectionGridProps) => {
   } = useCollection({type});
   const navigation = useNavigation();
   const onShowPhotoPreview = item => {
+    if (onPressPhoto) {
+      onPressPhoto(item);
+      return;
+    }
     navigation.navigate('PhotoPreview', {
       item,
       onRefreshPhoto,
@@ -125,15 +123,15 @@ const CollectionGrid = ({type}: CollectionGridProps) => {
                 onPress={() => {
                   onShowPhotoPreview(item);
                 }}>
-                <Image
+                <FastImage
                   source={{
                     uri: COLLECTION_PHOTO_URL.replace('PHOTO_ID', item.url),
                   }}
                   style={{
                     width: width,
                     height: (width * item.height) / item.width,
-                    resizeMode: 'contain',
                   }}
+                  resizeMode="contain"
                 />
               </TouchableOpacity>
             );
@@ -159,15 +157,15 @@ const CollectionGrid = ({type}: CollectionGridProps) => {
                 onPress={() => {
                   onShowPhotoPreview(item);
                 }}>
-                <Image
-                source={{
-                  uri: COLLECTION_PHOTO_URL.replace('PHOTO_ID', item.url),
-                }}
+                <FastImage
+                  source={{
+                    uri: COLLECTION_PHOTO_URL.replace('PHOTO_ID', item.url),
+                  }}
                   style={{
                     width: width,
                     height: (width * item.height) / item.width,
-                    resizeMode: 'contain',
                   }}
+                  resizeMode={'contain'}
                 />
               </TouchableOpacity>
             );

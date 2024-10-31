@@ -1,0 +1,16 @@
+{
+  "tab": {
+    "info": "Info",
+    "playlist": "Playlist",
+    "collection": "Collection"
+  },
+  "toast": {
+    "theme_dark": "Dark mode selected",
+    "theme_light": "Light mode selected",
+    "theme_system": "System mode selected"
+  },
+  "collection": {
+    "all": "All",
+    "favorite": "Favorite"
+  }
+}

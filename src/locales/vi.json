@@ -1,0 +1,16 @@
+{
+  "tab": {
+    "info": "Thông tin",
+    "playlist": "Danh sách bài hát",
+    "collection": "Bộ sưu tập ảnh"
+  },
+  "toast": {
+    "theme_dark": "Chế độ tối đã được chọn",
+    "theme_light": "Chế độ sáng đã được chọn",
+    "theme_system": "Chế độ theo thiết bị đã được chọn"
+  },
+  "collection": {
+    "all": "Tất cả",
+    "favorite": "Yêu thích"
+  }
+}

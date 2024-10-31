@@ -12,11 +12,17 @@ export enum ELoop {
   loop_all = 'loop_all',
 }
 
+export interface IScript {
+  code: string;
+  data: any[];
+}
+
 interface PlayListState {
   songPlaying: Song | null;
   songs: Song[];
   shuffle: boolean;
   loop: ELoop;
+  scripts: Record<string, any[]>;
 }
 
 const initialState: PlayListState = {
@@ -24,6 +30,7 @@ const initialState: PlayListState = {
   songs: [],
   shuffle: false,
   loop: ELoop.loop_all,
+  scripts: {},
 };
 
 const playlistSlice = createSlice({
@@ -89,6 +96,12 @@ const playlistSlice = createSlice({
     setLoop(state, action: PayloadAction<ELoop>) {
       state.loop = action.payload;
     },
+    addScripts(state, action: PayloadAction<IScript>) {
+      state.scripts = {
+        ...state.scripts,
+        [action.payload.code]: action.payload.data,
+      };
+    },
   },
 });
 
@@ -101,6 +114,7 @@ export const {
   onToggleLoop,
   setSuffle,
   setLoop,
+  addScripts,
 } = playlistSlice.actions;
 
 export default playlistSlice.reducer;

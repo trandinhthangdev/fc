@@ -7,7 +7,7 @@ import {useAppSelector} from '../redux/store';
 import db from './../db/Database'; // Assuming your singleton is saved in Database.ts
 import StorageService from '../db/StorageService';
 import {getRandomItems} from '../utils/functions';
-import {ETabView} from '../screens/Collection';
+import {ETabView} from '../components/Collection/CollectionGrid';
 interface Page {
   id: number;
   url: string;

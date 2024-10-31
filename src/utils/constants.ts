@@ -37,3 +37,15 @@ export const PLAYLIST_COVER_URL =
   'https://res.cloudinary.com/dieuruvm8/raw/upload/jack/playlist/cover/SONG_ID.jpg';
 export const PLAYLIST_SCRIPTS_URL =
   'https://res.cloudinary.com/dieuruvm8/raw/upload/jack/playlist/scripts/SONG_ID.json';
+
+export const EMessage = {
+  text: 'text',
+  photo: 'photo',
+  song: 'song',
+};
+
+export const LANG_CODE = 'vi';
+
+export enum ScreenName {
+  PlaySongScreen = 'PlaySongScreen',
+}

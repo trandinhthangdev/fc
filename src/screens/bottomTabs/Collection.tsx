@@ -1,18 +1,11 @@
-import {useNavigation} from '@react-navigation/native';
-import {
-  Animated,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
-import {screenWidth} from '../utils/constants';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {screenWidth} from '../../utils/constants';
 import {useEffect, useMemo, useRef, useState} from 'react';
-import {useTheme} from '../contexts/ThemeContext';
-import AppIcon from '../components/common/AppIcon';
-import CollectionGrid from '../components/Collection/CollectionGrid';
+import {useTheme} from '../../contexts/ThemeContext';
+import AppIcon from '../../components/common/AppIcon';
+import CollectionGrid from '../../components/Collection/CollectionGrid';
+import LayoutApp from '../../components/layout/LayoutApp';
+import {useTranslation} from 'react-i18next';
 
 export enum ETabView {
   tab_all = 'tab_all',
@@ -20,6 +13,7 @@ export enum ETabView {
 }
 const width = screenWidth / 2 - 20;
 const Collection = () => {
+  const {t} = useTranslation();
   const {paletteColor} = useTheme();
   const [tabView, setTabView] = useState(ETabView.tab_all);
   const [loadingTabView, setLoadingTabView] = useState(false);
@@ -27,7 +21,7 @@ const Collection = () => {
   const tabs = [
     {
       code: ETabView.tab_all,
-      name: 'Tất cả',
+      name: t('collection.all'),
       icon: (
         <AppIcon
           name={tabView === ETabView.tab_all ? 'grid' : 'grid-outline'}
@@ -39,7 +33,7 @@ const Collection = () => {
     },
     {
       code: ETabView.tab_favorite,
-      name: 'Yêu thích',
+      name: t('collection.favorite'),
       icon: (
         <AppIcon
           name={tabView === ETabView.tab_favorite ? 'heart' : 'heart-outline'}
@@ -57,52 +51,54 @@ const Collection = () => {
   }, [loadingTabView]);
 
   return (
-    <View
-      style={{
-        backgroundColor: paletteColor.bg,
-        height: '100%',
-      }}>
-      <View style={{...styles.tab_list}}>
-        {tabs.map(tab => (
-          <TouchableOpacity
-            key={tab.code}
-            style={{
-              ...styles.tab_item,
-              borderBottomWidth: 1,
-              ...(tab.code === ETabView.tab_favorite &&
-              tabView === ETabView.tab_favorite
-                ? {borderBottomColor: '#EE66A6'}
-                : tab.code === ETabView.tab_all && tabView === ETabView.tab_all
-                ? {
-                    borderBottomColor: paletteColor.text,
-                  }
-                : {
-                    borderBottomColor: 'transparent',
-                  }),
-            }}
-            onPress={() => {
-              setLoadingTabView(true);
-              setTabView(tab.code);
-            }}>
-            {tab.icon}
-            <Text
+    <LayoutApp title={t('tab.collection')}>
+      <View
+        style={{
+          height: '100%',
+        }}>
+        <View style={{...styles.tab_list}}>
+          {tabs.map(tab => (
+            <TouchableOpacity
+              key={tab.code}
               style={{
-                ...styles.tab_item_text,
-                color: paletteColor.text,
+                ...styles.tab_item,
+                borderBottomWidth: 1,
                 ...(tab.code === ETabView.tab_favorite &&
                 tabView === ETabView.tab_favorite
+                  ? {borderBottomColor: '#EE66A6'}
+                  : tab.code === ETabView.tab_all &&
+                    tabView === ETabView.tab_all
                   ? {
-                      color: '#EE66A6',
+                      borderBottomColor: paletteColor.text,
                     }
-                  : {}),
+                  : {
+                      borderBottomColor: 'transparent',
+                    }),
+              }}
+              onPress={() => {
+                setLoadingTabView(true);
+                setTabView(tab.code);
               }}>
-              {tab.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              {tab.icon}
+              <Text
+                style={{
+                  ...styles.tab_item_text,
+                  color: paletteColor.text,
+                  ...(tab.code === ETabView.tab_favorite &&
+                  tabView === ETabView.tab_favorite
+                    ? {
+                        color: '#EE66A6',
+                      }
+                    : {}),
+                }}>
+                {tab.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        {!loadingTabView && <CollectionGrid type={tabView} />}
       </View>
-      {!loadingTabView && <CollectionGrid type={tabView} />}
-    </View>
+    </LayoutApp>
   );
 };
 

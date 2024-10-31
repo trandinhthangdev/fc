@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {Animated, Text, View, StyleSheet} from 'react-native';
-import {useTheme} from '../../contexts/ThemeContext';
+import {useTheme} from '../contexts/ThemeContext';
 
 const TypingAnimation = () => {
   const {themeColor} = useTheme();
