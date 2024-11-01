@@ -1,4 +1,5 @@
 import {NativeModules, ToastAndroid, Platform} from 'react-native';
+import i18n from '../../i18n';
 const {WallpaperModule, DeviceIdModule} = NativeModules;
 
 export const getRandomItems = <T>(arr: T[], num: number): T[] => {
@@ -22,7 +23,7 @@ const setWallpaper = async (base64Image: string) => {
   try {
     const result = await WallpaperModule.setWallpaper(base64Image);
     console.log(result);
-    ToastAndroid.show('Ảnh đã được sử dụng làm hình nền', 2000);
+    ToastAndroid.show(i18n.t('toast.set_wallpaper'), 2000);
   } catch (e) {
     console.error(e);
   }
@@ -70,5 +71,25 @@ export const formatDate = (date: Date) => {
     return `${hours}:${minutes}`;
   } else {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
+  }
+};
+
+export const fetchImageAsBase64 = async (
+  url: string,
+): Promise<string | null> => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () =>
+        resolve(reader.result?.toString().split(',')[1] ?? null);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.error('Error fetching and converting image:', error);
+    throw error;
   }
 };

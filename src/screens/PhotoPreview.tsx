@@ -4,7 +4,6 @@ import {useEffect, useRef, useState} from 'react';
 import AppIcon from '../components/common/AppIcon';
 import {useNavigation} from '@react-navigation/native';
 import db from './../db/Database';
-import {Photo} from '../redux/features/collectionSlice';
 import {useTheme} from '../contexts/ThemeContext';
 import PhotoView from '../components/Collection/PhotoView';
 
@@ -52,10 +51,11 @@ const PhotoPreview = ({route}) => {
   return (
     <View
       style={{
-        padding: 5,
+        padding: 8,
         height: '100%',
         width: screenWidth,
         position: 'relative',
+        backgroundColor: paletteColor.bg,
       }}>
       <TouchableOpacity
         style={{
@@ -79,16 +79,15 @@ const PhotoPreview = ({route}) => {
         horizontal
         pagingEnabled
         style={{
-          width: screenWidth,
-          height: screenHeight,
+          width: screenWidth - 16,
+          height: '100%',
         }}
         showsHorizontalScrollIndicator={false}>
         {items.map((item, index) => {
           return (
             <PhotoView
-              key={index}
+              key={item.url}
               photo={item}
-              onRefreshPhoto={onRefreshPhoto}
             />
           );
         })}
@@ -117,11 +116,14 @@ const styles = StyleSheet.create({
   //   // zIndex: 8,
   // },
   back_btn: {
+    width: 64,
     paddingVertical: 2,
     paddingHorizontal: 20,
     borderRadius: 20,
     zIndex: 999,
     elevation: 999,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   photo: {
     width: '100%',

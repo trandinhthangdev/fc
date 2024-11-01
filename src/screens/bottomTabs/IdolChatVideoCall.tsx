@@ -1,65 +1,78 @@
 import {Image, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
-import ChatBox from '../../components/IdolChat/ChatBox';
-import {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
-import AppIcon from '../../components/common/AppIcon';
 import LayoutApp from '../../components/layout/LayoutApp';
+import {useTranslation} from 'react-i18next';
 
 const IdolChatVideoCall = props => {
+  const {t} = useTranslation();
   const navigation = useNavigation();
   const {themeColor, paletteColor} = useTheme();
-  const [isShowChatBot, setIsShowChatBot] = useState(false);
   return (
     <LayoutApp title="Trò chuyện với J97">
       <View
         style={{
-          ...styles.container,
-          backgroundColor: paletteColor.bg,
+          height: '100%',
+          width: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 32,
         }}>
         <TouchableOpacity
           style={{
-            ...styles.start_chat_btn,
-            backgroundColor: paletteColor.text,
+            paddingVertical: 16,
+            paddingHorizontal: 32,
+            borderRadius: 16,
+            alignItems: 'center',
+            backgroundColor: '#F5EFFF',
           }}
           onPress={() => {
             navigation.navigate('IdolChatBox');
           }}>
-          <AppIcon
-            type="Ionicons"
-            name="chatbubble"
-            color={paletteColor.bg}
-            size={24}
-          />
           <Text
             style={{
-              ...styles.start_chat_btn_text,
-              color: paletteColor.bg,
+              fontWeight: 'bold',
+              fontSize: 14,
+              color: '#4A628A',
+              marginBottom: 8,
             }}>
-            Nhắn tin với Jack
+            {t('idol_fake.message_with')} {t('name_idol')}
           </Text>
+          <Image
+            source={require('./../../assets/chat.png')}
+            style={{
+              width: 120,
+              height: 120,
+            }}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={{
-            ...styles.start_chat_btn,
-            backgroundColor: paletteColor.text,
+            paddingVertical: 16,
+            paddingHorizontal: 32,
+            borderRadius: 16,
+            alignItems: 'center',
+            backgroundColor: '#D4F6FF',
           }}
           onPress={() => {
             navigation.navigate('IdolVideoCallBox');
           }}>
-          <AppIcon
-            type="Ionicons"
-            name="videocam"
-            color={paletteColor.bg}
-            size={24}
-          />
           <Text
             style={{
-              ...styles.start_chat_btn_text,
-              color: paletteColor.bg,
+              fontWeight: 'bold',
+              fontSize: 14,
+              color: '#6482AD',
+              marginBottom: 8,
             }}>
-            Gọi video với Jack
+            {t('idol_fake.videocall_with')} {t('name_idol')}
           </Text>
+          <Image
+            source={require('./../../assets/videocall.png')}
+            style={{
+              width: 120,
+              height: 120,
+            }}
+          />
         </TouchableOpacity>
       </View>
     </LayoutApp>
@@ -101,7 +114,7 @@ const styles = StyleSheet.create({
   start_chat_btn: {
     padding: 20,
     borderRadius: 40,
-    flexDirection: 'row',
+
     alignItems: 'center',
     marginVertical: 10,
     width: 220,

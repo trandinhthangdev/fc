@@ -1,16 +1,30 @@
 {
+  "name_idol": "J97",
   "tab": {
     "info": "Thông tin",
     "playlist": "Danh sách bài hát",
-    "collection": "Bộ sưu tập ảnh"
+    "collection": "Bộ sưu tập ảnh",
+    "fan_community": "Cộng đồng fan"
   },
   "toast": {
     "theme_dark": "Chế độ tối đã được chọn",
     "theme_light": "Chế độ sáng đã được chọn",
-    "theme_system": "Chế độ theo thiết bị đã được chọn"
+    "theme_system": "Chế độ theo thiết bị đã được chọn",
+    "photo_love": "Bạn đã thêm hình ảnh vào mục yêu thích",
+    "photo_unlove": "Bạn đã bỏ hình ảnh khỏi mục yêu thích",
+    "sent_to_fan_Chat": "Bạn đã gửi hình ảnh đến fan chat",
+    "set_wallpaper": "Ảnh đã được sử dụng làm hình nền"
   },
   "collection": {
     "all": "Tất cả",
-    "favorite": "Yêu thích"
+    "favorite": "Yêu thích",
+    "send": "Send",
+    "share": "Share",
+    "set_wallpaper": "Set wallpaper"
+  },
+  "idol_fake": {
+    "message_with": "Nhắn tin với",
+    "videocall_with": "Gọi video với",
+    "videocall_desc": "Cuộc gọi video trên Messenger"
   }
 }

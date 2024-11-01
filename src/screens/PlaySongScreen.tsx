@@ -20,7 +20,7 @@ const PlaySongScreen = () => {
   return (
     <View
       style={{
-        height: screenHeight,
+        height: '100%',
         width: screenWidth,
         padding: 8,
         backgroundColor: paletteColor.bg,

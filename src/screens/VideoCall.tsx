@@ -14,7 +14,8 @@ const VideoCall = () => {
     <View
       style={{
         width: screenWidth,
-        height: screenHeight,
+        // height: screenHeight,
+        height: '100%',
         // backgroundColor: 'red',
         alignItems: 'center',
       }}>

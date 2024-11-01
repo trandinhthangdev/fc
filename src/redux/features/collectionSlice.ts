@@ -14,15 +14,11 @@ interface Page {
 
 interface PlayListState {
   collection: Photo[];
-  //   pages: Page[];
-  currentPhoto: Photo | null;
   pagesFetched: Page[] | null;
 }
 
 const initialState: PlayListState = {
   collection: [],
-  //   pages: [],
-  currentPhoto: null,
   pagesFetched: null,
 };
 
@@ -30,17 +26,11 @@ const collectionSlice = createSlice({
   name: 'collection',
   initialState,
   reducers: {
-    // setPages(state, action: PayloadAction<Page[]>) {
-    //   state.pages = action.payload;
-    // },
     addPhotos(state, action: PayloadAction<Photo[]>) {
       state.collection = [...state.collection, ...action.payload];
     },
     setCollection(state, action: PayloadAction<Photo[]>) {
       state.collection = action.payload;
-    },
-    setCurrentPhoto(state, action: PayloadAction<Photo>) {
-      state.currentPhoto = action.payload;
     },
     addPagesFetched(state, action: PayloadAction<Page>) {
       state.pagesFetched = state.pagesFetched
@@ -59,10 +49,8 @@ const collectionSlice = createSlice({
 });
 
 export const {
-  //   setPages,
   addPhotos,
   setCollection,
-  setCurrentPhoto,
   addPagesFetched,
   setPageFetched,
   updatePhotoCollection,

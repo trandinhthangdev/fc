@@ -19,7 +19,7 @@ interface useCollectionProps {
 export const useCollection = ({type}: useCollectionProps) => {
   const [pages, setPages] = useState<Page[] | null>(null);
   const [pagesFetched, setPagesFetched] = useState<Page[] | null>(null);
-  const {collection, currentPhoto} = useAppSelector(state => state.collection);
+  const {collection} = useAppSelector(state => state.collection);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -129,7 +129,6 @@ export const useCollection = ({type}: useCollectionProps) => {
   return {
     pages,
     collection,
-    currentPhoto,
     loadMore,
     isLoading,
   };

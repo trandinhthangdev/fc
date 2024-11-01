@@ -1,16 +1,30 @@
 {
+  "name_idol": "J97",
   "tab": {
     "info": "Info",
     "playlist": "Playlist",
-    "collection": "Collection"
+    "collection": "Collection",
+    "fan_community": "x"
   },
   "toast": {
     "theme_dark": "Dark mode selected",
     "theme_light": "Light mode selected",
-    "theme_system": "System mode selected"
+    "theme_system": "System mode selected",
+    "photo_love": "Bạn đã thêm hình ảnh vào mục yêu thích",
+    "photo_unlove": "Bạn đã bỏ hình ảnh khỏi mục yêu thích",
+    "sent_to_fan_Chat": "Bạn đã gửi hình ảnh đến fan chat",
+    "set_wallpaper": "Ảnh đã được sử dụng làm hình nền"
   },
   "collection": {
     "all": "All",
-    "favorite": "Favorite"
+    "favorite": "Favorite",
+    "send": "Send",
+    "share": "Share",
+    "set_wallpaper": "Set wallpaper"
+  },
+  "idol_fake": {
+    "message_with": "Nhắn tin với",
+    "videocall_with": "Gọi video với",
+    "videocall_desc": "Video Calls on Messenger"
   }
 }

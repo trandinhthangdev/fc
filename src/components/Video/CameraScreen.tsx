@@ -1,43 +1,63 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
-import {Camera, useCameraDevice} from 'react-native-vision-camera';
+import React, {useState, useEffect, useRef} from 'react';
+import {StyleSheet, View, Text, Image} from 'react-native';
+import {
+  Camera,
+  useCameraDevice,
+  CameraPosition,
+} from 'react-native-vision-camera';
 
-const CameraScreen = ({cameraPosition}: {cameraPosition: string}) => {
+const CameraScreen = ({
+  cameraPosition,
+  isCapture,
+  onCapture,
+}: {
+  cameraPosition: CameraPosition;
+  isCapture?: boolean;
+  onCapture?: () => void;
+}) => {
   const device = useCameraDevice(cameraPosition);
-  const [hasPermission, setHasPermission] = useState(false);
+  const cameraRef = useRef(null);
+  const [uri, setUri] = useState<any>(null);
 
+  const capturePhoto = async () => {
+    if (cameraRef.current != null) {
+      const photo = await cameraRef.current.takePhoto();
+      setUri(`file:///${photo?.path ?? ''}`);
+      onCapture && onCapture();
+    }
+  };
   useEffect(() => {
-    (async () => {
-      try {
-        const status = await Camera.requestCameraPermission();
-        setHasPermission(status === 'authorized');
-      } catch (e) {
-        console.log('e', e);
-      }
-    })();
-  }, []);
-
-  if (device == null) return <Text>Loading...</Text>;
-  //   if (!hasPermission) return <Text>No permission to use the camera</Text>;
+    if (isCapture) {
+      capturePhoto();
+    }
+  }, [isCapture]);
 
   return (
     <View style={styles.container}>
-      <Camera
-        style={{
-          position: 'absolute',
-          top: 10,
-          right: 10,
-          width: 120,
-          height: 160,
-          borderRadius: 20,
-        }}
-        zoom={1}
-        enableZoomGesture={true}
-        device={device}
-        isActive={true}
-        photo={true}
-        resizeMode={'contain'}
-      />
+      {uri ? (
+        <Image
+          source={{uri}}
+          style={{width: '100%', height: '100%'}}
+          resizeMode="contain"
+        />
+      ) : device == null ? (
+        <></>
+      ) : (
+        <Camera
+          ref={cameraRef}
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          zoom={1}
+          enableZoomGesture={true}
+          device={device}
+          isActive={true}
+          photo={true}
+          video={true}
+          resizeMode={'contain'}
+        />
+      )}
     </View>
   );
 };
@@ -47,8 +67,6 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-    // backgroundColor: 'red',
-    // overflow: 'hidden',
   },
 });
 

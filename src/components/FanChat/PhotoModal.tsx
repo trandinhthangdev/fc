@@ -1,34 +1,13 @@
 import {Modal, Text, View} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
-import {useCollection} from '../../hooks/useCollection';
 import CollectionGrid, {ETabView} from '../Collection/CollectionGrid';
 import {Photo} from '../../redux/features/collectionSlice';
-import axios from 'axios';
-import {EMessage} from '../../utils/constants';
-import {useMe} from '../../hooks/useMe';
+import {useSendMessage} from '../../hooks/useSendMessage';
 
 const PhotoModal = ({open, onClose}: {open: boolean; onClose: () => void}) => {
-  const {me} = useMe();
   const {paletteColor} = useTheme();
-  const onSend = async (photo: Photo) => {
-    const msgData = {
-      uid: me.id,
-      username: me.name,
-      message: photo.url,
-      type: EMessage.photo,
-    };
+  const {onSendPhoto} = useSendMessage();
 
-    console.log('msgData', msgData);
-    try {
-      // Send the message to the backend API
-      const response = await axios.post(
-        'http://192.168.0.104:3000/messages',
-        msgData,
-      );
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
-  };
   return (
     <Modal
       animationType="slide"
@@ -47,8 +26,7 @@ const PhotoModal = ({open, onClose}: {open: boolean; onClose: () => void}) => {
         <CollectionGrid
           type={ETabView.tab_all}
           onPressPhoto={(photo: Photo) => {
-            console.log(photo);
-            onSend(photo);
+            onSendPhoto(photo);
             onClose();
           }}
         />

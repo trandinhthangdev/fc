@@ -1,26 +1,34 @@
 import {useEffect, useState} from 'react';
 import StorageService from '../db/StorageService';
+import {useAppSelector} from '../redux/store';
+import {useDispatch} from 'react-redux';
+import {setMe} from '../redux/features/userSlice';
 
 export const useMe = () => {
-  const [me, setMe] = useState<any>(undefined);
+  const dispatch = useDispatch();
+  const {me} = useAppSelector(state => state.user);
+
   useEffect(() => {
-    getMeInit();
+    if (me === undefined) getMeInit();
   }, []);
   const getMeInit = async () => {
     try {
       const storage = StorageService.getInstance();
-      const {data: initMe} = await storage.getItem('me');
+      const {data: initMe}: any = await storage.getItem('me');
       if (initMe) {
-        setMe(initMe);
+        updateMe(initMe);
       } else {
-        setMe(null);
+        updateMe(null);
       }
     } catch (e) {
-      setMe(null);
+      updateMe(null);
     }
+  };
+  const updateMe = (data: any) => {
+    dispatch(setMe(data));
   };
   return {
     me,
-    setMe,
+    updateMe,
   };
 };

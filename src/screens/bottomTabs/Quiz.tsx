@@ -1,6 +1,7 @@
 import {useIsFocused} from '@react-navigation/native';
 import {useEffect, useState} from 'react';
 import {
+  Image,
   NativeEventEmitter,
   NativeModules,
   Platform,
@@ -12,6 +13,10 @@ import {
 import Tts from 'react-native-tts';
 import questions from '../../data/questions.json';
 import LayoutApp from '../../components/layout/LayoutApp';
+import {useTheme} from '../../contexts/ThemeContext';
+import QuestionQuiz from '../../components/Quiz/QuestionQuiz';
+import AppIcon from '../../components/common/AppIcon';
+import {useSendMessage} from '../../hooks/useSendMessage';
 
 const ee = new NativeEventEmitter(NativeModules.TextToSpeech);
 ee.addListener('tts-start', () => {});
@@ -22,104 +27,227 @@ const Quiz = props => {
   const isFocused = useIsFocused();
   const [currentIndex, setCurrentIndex] = useState(null);
   const [point, setPoint] = useState(0);
+  const {paletteColor} = useTheme();
+  const [isStop, setIsStop] = useState(false);
+  const {onSendQuiz} = useSendMessage();
 
-  useEffect(() => {
-    // if (isFocused) playVoice();
-  }, [isFocused]);
   const text = 'Chúng ta cùng đi tìm : "Ai là Đóm Đóm"';
-  const playVoice = () => {
-    Tts.setDefaultLanguage('vi-VN');
-    Tts.setDefaultVoice('vi-VN-language');
-    if (Platform.OS === 'ios') {
-      Tts.speak(text, {
-        iosVoiceId: 'com.apple.voice.compact.vi-VN.Linh',
-        rate: 0.6,
-      });
-    } else if (Platform.OS === 'android') {
-      Tts.speak(text, {
-        androidParams: {
-          KEY_PARAM_PAN: 0,
-          KEY_PARAM_VOLUME: 1,
-          KEY_PARAM_STREAM: 'STREAM_MUSIC',
-        },
-      });
-    }
-  };
+
   const question = currentIndex !== null ? questions[currentIndex] : null;
   return (
-    <LayoutApp title={'Quiz'}>
-      <View>
-        {question ? (
+    <LayoutApp
+      title={'Quiz'}
+      customStyle={{
+        position: 'relative',
+      }}
+      left={
+        currentIndex !== null && point ? (
           <View
             style={{
-              width: '100%',
-              paddingHorizontal: 20,
-              alignItems: 'center',
+              backgroundColor: '#640D5F',
+              paddingVertical: 0,
+              paddingHorizontal: 8,
+              borderRadius: 16,
             }}>
             <Text
               style={{
                 color: '#fff',
-                textAlign: 'center',
                 fontWeight: 'bold',
-                fontSize: 16,
               }}>
-              {question.question}
+              {point}
             </Text>
+          </View>
+        ) : undefined
+      }>
+      <View
+        style={{
+          height: '100%',
+          width: '100%',
+        }}>
+        {isStop ? (
+          <View
+            style={{
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
             <Text
               style={{
-                color: '#fff',
+                fontSize: 14,
+                color: paletteColor.text,
               }}>
-              {question.point}
+              Chúng ta cùng đi tìm :{' '}
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                }}>
+                "Ai là Đóm Đóm"
+              </Text>
+            </Text>
+            <Image
+              source={require('./../../assets/quiz.png')}
+              style={{
+                width: 150,
+                height: 150,
+                marginVertical: 16,
+              }}
+            />
+            <Image
+              source={require('./../../assets/clapping.png')}
+              style={{
+                width: 48,
+                height: 48,
+              }}
+            />
+            <Text
+              style={{
+                fontSize: 14,
+                color: paletteColor.text,
+                marginVertical: 8,
+              }}>
+              Điểm bạn đạt được:{' '}
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                }}>
+                {point}
+              </Text>
             </Text>
             <View
               style={{
-                marginBottom: 20,
+                flexDirection: 'row',
+                gap: 16,
+                marginVertical: 16,
               }}>
-              {question.answers.map((item, index) => {
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    style={{
-                      padding: 10,
-                      backgroundColor: 'rgba(255,245,205, 0.4)',
-                      borderRadius: 10,
-                      marginVertical: 10,
-                    }}
-                    onPress={() => {
-                      console.log(question.correct_index, index);
-                      if (question.correct_index === index) {
-                        setPoint(prev => prev + question.point);
-                      }
-                    }}>
-                    <Text
-                      style={{
-                        color: '#fff',
-                      }}>
-                      {item}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#BC5A94',
+                  alignItems: 'center',
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  borderRadius: 40,
+                  width: 120,
+                }}
+                onPress={() => onSendQuiz(point)}>
+                <AppIcon
+                  name={'send'}
+                  type="FontAwesome"
+                  size={24}
+                  color={'#fff'}
+                />
+                <Text
+                  style={{
+                    color: '#fff',
+                    marginTop: 4,
+                    fontSize: 12,
+                    textAlign: 'center',
+                  }}>
+                  Cộng đồng fan
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: '#BC5A94',
+                  alignItems: 'center',
+                  paddingVertical: 8,
+                  paddingHorizontal: 16,
+                  borderRadius: 40,
+                  width: 120,
+                }}>
+                <AppIcon
+                  name={'share-social'}
+                  type="Ionicons"
+                  size={24}
+                  color={paletteColor.bg}
+                />
+                <Text
+                  style={{
+                    color: '#fff',
+                    marginTop: 4,
+                    fontSize: 12,
+                    textAlign: 'center',
+                  }}>
+                  Chia sẻ
+                </Text>
+              </TouchableOpacity>
             </View>
-            {/* <TouchableOpacity
-              style={styles.start_quiz_btn}
-              onPress={() => setCurrentIndex(prev => prev + 1)}>
-              <Text style={styles.start_quiz_btn_text}>Next</Text>
-            </TouchableOpacity> */}
-          </View>
-        ) : (
-          <>
-            {/* <Image
-              source={require('./../assets/jack.jpeg')}
-              style={styles.logo}
-            /> */}
-            <Text style={styles.desc_text}>{text}</Text>
             <TouchableOpacity
-              style={styles.start_quiz_btn}
-              onPress={() => setCurrentIndex(0)}>
-              <Text style={styles.start_quiz_btn_text}>Start quiz</Text>
+              style={{
+                backgroundColor: '#D4BEE4',
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderRadius: 20,
+              }}
+              onPress={() => {
+                setIsStop(false);
+                setCurrentIndex(0);
+                setPoint(0);
+              }}>
+              <Text
+                style={{
+                  color: '#3B1E54',
+                  fontWeight: 'bold',
+                  fontSize: 16,
+                }}>
+                bắt đầu lại
+              </Text>
             </TouchableOpacity>
-          </>
+          </View>
+        ) : question ? (
+          <QuestionQuiz
+            currentIndex={currentIndex}
+            question={question}
+            onNextQuestion={check => {
+              if (check) {
+                setPoint(prev => prev + question.point);
+                setCurrentIndex(prev => prev + 1);
+              } else {
+                setIsStop(true);
+                setCurrentIndex(null);
+              }
+            }}
+          />
+        ) : (
+          <View
+            style={{
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text
+              style={{
+                fontSize: 14,
+                marginBottom: 20,
+                color: paletteColor.text,
+              }}>
+              {text}
+            </Text>
+            <Image
+              source={require('./../../assets/quiz.png')}
+              style={{
+                width: 150,
+                height: 150,
+                marginVertical: 16,
+              }}
+            />
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#D4BEE4',
+                paddingVertical: 8,
+                paddingHorizontal: 16,
+                borderRadius: 20,
+              }}
+              onPress={() => setCurrentIndex(0)}>
+              <Text
+                style={{
+                  color: '#3B1E54',
+                  fontWeight: 'bold',
+                  fontSize: 16,
+                }}>
+                Start quiz
+              </Text>
+            </TouchableOpacity>
+          </View>
         )}
       </View>
     </LayoutApp>

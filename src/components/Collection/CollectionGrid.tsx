@@ -3,7 +3,7 @@ import {Animated, StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {COLLECTION_PHOTO_URL, screenWidth} from '../../utils/constants';
 import {useCollection} from '../../hooks/useCollection';
-import {useMemo, useRef} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
 import {
   Photo,
   updatePhotoCollection,
@@ -40,17 +40,12 @@ const CollectionGrid = ({type, onPressPhoto}: CollectionGridProps) => {
     }
     navigation.navigate('PhotoPreview', {
       item,
-      onRefreshPhoto,
     });
   };
   const collection = useMemo(() => {
     if (type === ETabView.tab_all) return collectionState;
     return collectionState.filter(item => !!item.loved_at);
   }, [collectionState]);
-  const onRefreshPhoto = (photo: Photo) => {
-    dispatch(updatePhotoCollection(photo));
-  };
-
   const handleScroll = (event: any) => {
     const {contentOffset, layoutMeasurement, contentSize} = event.nativeEvent;
     const isAtBottom =

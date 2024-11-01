@@ -38,14 +38,17 @@ export const PLAYLIST_COVER_URL =
 export const PLAYLIST_SCRIPTS_URL =
   'https://res.cloudinary.com/dieuruvm8/raw/upload/jack/playlist/scripts/SONG_ID.json';
 
-export const EMessage = {
-  text: 'text',
-  photo: 'photo',
-  song: 'song',
-};
+export enum EMessage {
+  text = 'text',
+  photo = 'photo',
+  song = 'song',
+  quiz = 'quiz',
+}
 
 export const LANG_CODE = 'vi';
 
 export enum ScreenName {
   PlaySongScreen = 'PlaySongScreen',
 }
+
+export const FAN_CHAT_BASE_URL = 'http://192.168.0.108:3000';

@@ -6,95 +6,87 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Photo} from '../../redux/features/collectionSlice';
-import {useTheme} from '../../contexts/ThemeContext';
 import {
-  COLLECTION_PHOTO_URL,
-  EMessage,
-  screenHeight,
-  screenWidth,
-} from '../../utils/constants';
+  Photo,
+  updatePhotoCollection,
+} from '../../redux/features/collectionSlice';
+import {useTheme} from '../../contexts/ThemeContext';
+import {COLLECTION_PHOTO_URL, screenWidth} from '../../utils/constants';
 import FastImage from 'react-native-fast-image';
 import AppIcon from '../common/AppIcon';
-import axios from 'axios';
 import {useMe} from '../../hooks/useMe';
-import {useRoute} from '@react-navigation/native';
 import db from './../../db/Database';
-import {handleSetWallpaper} from '../../utils/functions';
+import {fetchImageAsBase64, handleSetWallpaper} from '../../utils/functions';
+import {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import Share from 'react-native-share';
+import {useSendMessage} from '../../hooks/useSendMessage';
+import {useDispatch} from 'react-redux';
 
-const PhotoView = ({
-  photo,
-  onRefreshPhoto,
-}: {
-  photo: Photo;
-  onRefreshPhoto?: (photo: Photo) => void;
-}) => {
+const PhotoView = ({photo}: {photo: Photo}) => {
+  const dispatch = useDispatch();
+  const {t} = useTranslation();
+  const [item, setItem] = useState(photo);
   const {me} = useMe();
   const {paletteColor} = useTheme();
-  const route = useRoute();
   const isIOS = Platform.OS === 'ios';
+  const {onSendPhoto} = useSendMessage();
 
   const onToggleLove = async () => {
     const currentDateTime = new Date().toISOString();
-    onRefreshPhoto &&
-      onRefreshPhoto({
-        ...photo,
-        loved_at: photo.loved_at ? null : currentDateTime,
-      });
-    await db.toggleLove(photo.url);
-    if (photo.loved_at) {
-      ToastAndroid.showWithGravityAndOffset(
-        'Bạn đã bỏ hình ảnh khỏi mục yêu thích',
-        2000,
-        0,
-        0,
-        0,
+
+    dispatch(
+      updatePhotoCollection({
+        ...item,
+        loved_at: item.loved_at ? null : currentDateTime,
+      }),
+    );
+    setItem(prev => ({
+      ...prev,
+      loved_at: prev.loved_at ? null : currentDateTime,
+    }));
+    await db.toggleLove(item.url);
+    if (item.loved_at) {
+      ToastAndroid.showWithGravity(
+        t('toast.photo_unlove'),
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
       );
     } else {
-      ToastAndroid.show('Bạn đã thêm hình ảnh vào mục yêu thích', 2000);
+      ToastAndroid.showWithGravity(
+        t('toast.photo_love'),
+        ToastAndroid.SHORT,
+        ToastAndroid.TOP,
+      );
     }
   };
 
-  const onShare = () => {
+  const onShare = async () => {
     try {
-      Share.open({
-        url: COLLECTION_PHOTO_URL.replace('PHOTO_ID', item.url),
-      });
+      const base64Image = await fetchImageAsBase64(
+        COLLECTION_PHOTO_URL.replace('PHOTO_ID', item.url),
+      );
+      if (base64Image) {
+        await Share.open({
+          url: `data:image/jpeg;base64,${base64Image}`,
+          title: t('name_idol'),
+        });
+      }
     } catch (e) {
       console.log('e', e);
     }
   };
-  const onSend = async () => {
-    const msgData = {
-      uid: me.id,
-      username: me.name,
-      message: photo.url,
-      type: EMessage.photo,
-    };
 
-    console.log('msgData', msgData);
-    try {
-      const response = await axios.post(
-        'http://192.168.0.104:3000/messages',
-        msgData,
-      );
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
-  };
   return (
     <View
       style={{
-        // padding: 4,
         height: '100%',
-        width: screenWidth,
+        width: screenWidth - 16,
         position: 'relative',
-        backgroundColor: paletteColor.bg,
       }}>
       <View
         style={{
-          width: screenWidth - 8,
-          height: screenHeight - 8,
+          padding: 8,
         }}>
         <FastImage
           style={styles.photo}
@@ -118,17 +110,21 @@ const PhotoView = ({
           justifyContent: 'space-around',
           backgroundColor: paletteColor.text,
         }}>
-        <TouchableOpacity style={styles.action_btn} onPress={() => onSend()}>
-          <AppIcon
-            name={'send'}
-            type="FontAwesome"
-            size={24}
-            color={paletteColor.bg}
-          />
-          <Text style={{...styles.action_btn_text, color: paletteColor.bg}}>
-            Gửi
-          </Text>
-        </TouchableOpacity>
+        {me && (
+          <TouchableOpacity
+            style={styles.action_btn}
+            onPress={() => onSendPhoto(photo)}>
+            <AppIcon
+              name={'send'}
+              type="FontAwesome"
+              size={24}
+              color={paletteColor.bg}
+            />
+            <Text style={{...styles.action_btn_text, color: paletteColor.bg}}>
+              {t('collection.send')}
+            </Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity style={styles.action_btn} onPress={() => onShare()}>
           <AppIcon
             name={'share-social'}
@@ -137,26 +133,28 @@ const PhotoView = ({
             color={paletteColor.bg}
           />
           <Text style={{...styles.action_btn_text, color: paletteColor.bg}}>
-            Chia sẻ
+            {t('collection.share')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.action_btn}
           onPress={() => onToggleLove()}>
           <AppIcon
-            name={photo.loved_at ? 'heart' : 'heart-outline'}
+            name={item.loved_at ? 'heart' : 'heart-outline'}
             type="Ionicons"
             size={24}
             color={paletteColor.bg}
           />
           <Text style={{...styles.action_btn_text, color: paletteColor.bg}}>
-            Yêu thích
+            {t('collection.favorite')}
           </Text>
         </TouchableOpacity>
         {!isIOS && (
           <TouchableOpacity
             onPress={() => {
-              handleSetWallpaper(photo.url);
+              handleSetWallpaper(
+                COLLECTION_PHOTO_URL.replace('PHOTO_ID', photo.url),
+              );
             }}
             style={styles.action_btn}>
             <AppIcon
@@ -170,7 +168,7 @@ const PhotoView = ({
                 ...styles.action_btn_text,
                 color: paletteColor.bg,
               }}>
-              Đặt hình nền
+              {t('collection.set_wallpaper')}
             </Text>
           </TouchableOpacity>
         )}

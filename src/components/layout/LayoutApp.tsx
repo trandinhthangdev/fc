@@ -4,7 +4,7 @@ import {useRoute} from '@react-navigation/native';
 import SwitchMode from '../common/SwitchMode';
 import {ScrollView} from 'react-native-gesture-handler';
 
-const LayoutApp = ({title, children}) => {
+const LayoutApp = ({title, children, customStyle, left}) => {
   const {paletteColor} = useTheme();
   const route = useRoute();
   return (
@@ -13,6 +13,7 @@ const LayoutApp = ({title, children}) => {
         height: '100%',
         width: '100%',
         backgroundColor: paletteColor.bg,
+        ...(customStyle ? customStyle : {}),
       }}>
       <View
         style={{
@@ -23,6 +24,15 @@ const LayoutApp = ({title, children}) => {
           padding: 8,
           // backgroundColor: 'red',
         }}>
+        {left && (
+          <View
+            style={{
+              position: 'absolute',
+              left: 8,
+            }}>
+            {left}
+          </View>
+        )}
         <Text
           style={{
             color: paletteColor.text,

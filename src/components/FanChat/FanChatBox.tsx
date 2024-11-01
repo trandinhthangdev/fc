@@ -18,20 +18,30 @@ import {formatDate} from '../../utils/functions';
 import {
   COLLECTION_PHOTO_URL,
   EMessage,
+  FAN_CHAT_BASE_URL,
   screenWidth,
 } from '../../utils/constants';
 import _ from 'lodash';
 import FastImage from 'react-native-fast-image';
 import PhotoModal from './PhotoModal';
-interface IMessage {
+import {useIsFocused} from '@react-navigation/native';
+import {useAppSelector} from '../../redux/store';
+import {useDispatch} from 'react-redux';
+import {setNb} from '../../redux/features/chatSlice';
+export interface IMessage {
   username: string;
   message: string;
   time: Date;
+  type: EMessage;
 }
 
-const socket = io('http://192.168.0.104:3000');
+const socket = io(FAN_CHAT_BASE_URL);
 
 const FanChatBox = ({me}: {me: any}) => {
+  const isFocused = useIsFocused();
+  const dispatch = useDispatch();
+  const {newMessage} = useAppSelector(state => state.chat);
+
   const flatListRef = useRef(null);
   const {paletteColor} = useTheme();
   const [message, setMessage] = useState<string>('');
@@ -43,16 +53,20 @@ const FanChatBox = ({me}: {me: any}) => {
 
   useEffect(() => {
     fetchMessages(page);
-    // Listen for new messages broadcasted via Socket.IO
-    socket.on('receiveMessage', (msg: IMessage) => {
-      console.log('msg', msg);
-      setMessages(currentMessages => [msg, ...currentMessages]);
-    });
-
-    return () => {
-      socket.off('receiveMessage');
-    };
   }, []);
+  useEffect(() => {
+    if (isFocused) {
+      dispatch(setNb(0));
+    }
+  }, [isFocused]);
+
+  useEffect(() => {
+    if (newMessage) {
+      setMessages(currentMessages =>
+        _.uniqBy([newMessage, ...currentMessages], '_id'),
+      );
+    }
+  }, [newMessage]);
 
   const fetchMessages = async (pageNum: number) => {
     if (loading || !hasMore) return;
@@ -61,7 +75,7 @@ const FanChatBox = ({me}: {me: any}) => {
 
     try {
       const response = await axios.get(
-        `http://192.168.0.104:3000/messages?page=${pageNum}&limit=10`,
+        `${FAN_CHAT_BASE_URL}/messages?page=${pageNum}&limit=10`,
       );
       const {messages: fetchedMessages, totalPages} = response.data;
       setMessages(prevMessages =>
@@ -75,7 +89,6 @@ const FanChatBox = ({me}: {me: any}) => {
     }
   };
 
-  // Send message via API
   const sendMessage = async () => {
     if (message.trim()) {
       const msgData = {
@@ -83,15 +96,8 @@ const FanChatBox = ({me}: {me: any}) => {
         username: me.name,
         message,
       };
-
       try {
-        // Send the message to the backend API
-        const response = await axios.post(
-          'http://192.168.0.104:3000/messages',
-          msgData,
-        );
-
-        // Clear input field after sending message
+        await axios.post(`${FAN_CHAT_BASE_URL}/messages`, msgData);
         setMessage('');
       } catch (error) {
         console.error('Error sending message:', error);
@@ -111,7 +117,7 @@ const FanChatBox = ({me}: {me: any}) => {
       });
     }
   };
-  // console.log(messages[0]);
+  console.log(messages[0]);
   return (
     <>
       <View style={{flex: 1, justifyContent: 'center'}}>
@@ -122,10 +128,11 @@ const FanChatBox = ({me}: {me: any}) => {
           }}
           data={messages}
           inverted
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => item._id}
           renderItem={({item}) => {
             const isMe = item?.uid === me?.id;
-            const isPhoto = item.type == EMessage.photo;
+            const isPhoto = item.type === EMessage.photo;
+            const isQuiz = item.type === EMessage.quiz;
             return (
               <View
                 style={{
@@ -225,13 +232,44 @@ const FanChatBox = ({me}: {me: any}) => {
                             resizeMode={'contain'}
                           />
                         </View>
+                      ) : isQuiz ? (
+                        <View
+                          style={{
+                            alignItems: 'center',
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 12,
+                              ...(isMe ? {color: '#fff'} : {color: '#000E08'}),
+                            }}>
+                            Ai là Đóm Đóm
+                          </Text>
+                          <Image
+                            source={require('./../../assets/quiz.png')}
+                            style={{
+                              width: 60,
+                              height: 60,
+                            }}
+                          />
+                          <Text
+                            style={{
+                              ...(isMe ? {color: '#fff'} : {color: '#000E08'}),
+                            }}>
+                            <Text>Điểm số: </Text>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                              }}>
+                              {item.message}
+                            </Text>
+                          </Text>
+                        </View>
                       ) : (
                         <Text
                           style={{
-                            color: '#000E08',
                             ...(isMe
                               ? {textAlign: 'right', color: '#fff'}
-                              : {textAlign: 'left'}),
+                              : {textAlign: 'left', color: '#000E08'}),
                           }}>
                           {item.message.trim()}
                         </Text>
