@@ -2,8 +2,8 @@ import TrackPlayer, {
   AppKilledPlaybackBehavior,
   Capability,
 } from 'react-native-track-player';
-import {Song} from '../redux/features/playlistSlice';
-import {PLAYLIST_AUDIO_URL} from '../utils/constants';
+import {Song} from '../../../redux/features/playlistSlice';
+import {PLAYLIST_AUDIO_URL} from '../../../utils/constants';
 
 export async function setupPlayer() {
   let isSetup = false;

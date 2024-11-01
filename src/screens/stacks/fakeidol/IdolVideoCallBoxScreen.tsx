@@ -1,18 +1,18 @@
 import {Image, Text, TouchableOpacity, View} from 'react-native';
-import VideoPlayer from '../../components/Video/VideoPlayer';
-import AppIcon from '../../components/common/AppIcon';
-import {screenHeight, screenWidth} from '../../utils/constants';
+import VideoPlayer from '../../../components/Video/VideoPlayer';
+import AppIcon from '../../../components/common/AppIcon';
+import {screenHeight, screenWidth} from '../../../utils/constants';
 import {useEffect, useRef, useState} from 'react';
-import CameraScreen from '../../components/Video/CameraScreen';
+import CameraScreen from '../../../components/Video/CameraScreen';
 import {useNavigation} from '@react-navigation/native';
-import {useTheme} from '../../contexts/ThemeContext';
+import {useTheme} from '../../../contexts/ThemeContext';
 import {Camera, CameraPosition} from 'react-native-vision-camera';
 import ViewShot, {captureRef} from 'react-native-view-shot';
 import Share from 'react-native-share';
 import {useTranslation} from 'react-i18next';
-import LoadingCall from '../../components/IdolChat/LoadingCall';
+import LoadingCall from '../../../components/IdolChat/LoadingCall';
 
-const IdolVideoCallBox = () => {
+const IdolVideoCallBoxScreen = () => {
   const ref = useRef();
   const {t} = useTranslation();
   const {paletteColor} = useTheme();
@@ -295,4 +295,4 @@ const IdolVideoCallBox = () => {
     </ViewShot>
   );
 };
-export default IdolVideoCallBox;
+export default IdolVideoCallBoxScreen;

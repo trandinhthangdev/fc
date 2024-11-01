@@ -3,10 +3,11 @@ import {useTheme} from '../../contexts/ThemeContext';
 import {useNavigation} from '@react-navigation/native';
 import LayoutApp from '../../components/layout/LayoutApp';
 import {useTranslation} from 'react-i18next';
+import {ScreenName} from '../../utils/constants';
 
-const IdolChatVideoCall = props => {
+const FakeIdolScreen = props => {
   const {t} = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const {themeColor, paletteColor} = useTheme();
   return (
     <LayoutApp title="Trò chuyện với J97">
@@ -27,7 +28,7 @@ const IdolChatVideoCall = props => {
             backgroundColor: '#F5EFFF',
           }}
           onPress={() => {
-            navigation.navigate('IdolChatBox');
+            navigation.navigate(ScreenName.IdolChatBoxScreen);
           }}>
           <Text
             style={{
@@ -55,7 +56,7 @@ const IdolChatVideoCall = props => {
             backgroundColor: '#D4F6FF',
           }}
           onPress={() => {
-            navigation.navigate('IdolVideoCallBox');
+            navigation.navigate(ScreenName.IdolVideoCallBoxScreen);
           }}>
           <Text
             style={{
@@ -79,7 +80,7 @@ const IdolChatVideoCall = props => {
   );
 };
 
-export default IdolChatVideoCall;
+export default FakeIdolScreen;
 const styles = StyleSheet.create({
   container: {
     height: '100%',

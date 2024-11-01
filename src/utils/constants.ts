@@ -48,7 +48,17 @@ export enum EMessage {
 export const LANG_CODE = 'vi';
 
 export enum ScreenName {
+  PlaylistScreen = 'PlaylistScreen',
+  CollectionScreen = 'CollectionScreen',
+  FakeIdolScreen = 'FakeIdolScreen',
+  FanCommunityScreen = 'FanCommunityScreen',
+  QuizScreen = 'QuizScreen',
+  InfoScreen = 'InfoScreen',
+  TabCustomScreen = 'TabCustomScreen',
   PlaySongScreen = 'PlaySongScreen',
+  PhotoPreviewScreen = 'PhotoPreviewScreen',
+  IdolChatBoxScreen = 'IdolChatBoxScreen',
+  IdolVideoCallBoxScreen = 'IdolVideoCallBoxScreen',
 }
 
 export const FAN_CHAT_BASE_URL = 'http://192.168.0.108:3000';

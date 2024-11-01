@@ -17,7 +17,7 @@ import TrackPlayer, {
   State,
 } from 'react-native-track-player';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {setupPlayer, addTracks} from './trackPlayerServices';
+import {setupPlayer, addTracks} from '../screens/trackPlayerServices';
 import {useSelector} from 'react-redux';
 import {useAppSelector} from '../redux/store';
 

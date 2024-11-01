@@ -23,7 +23,7 @@ ee.addListener('tts-start', () => {});
 ee.addListener('tts-finish', () => {});
 ee.addListener('tts-cancel', () => {});
 
-const Quiz = props => {
+const QuizScreen = props => {
   const isFocused = useIsFocused();
   const [currentIndex, setCurrentIndex] = useState(null);
   const [point, setPoint] = useState(0);
@@ -254,7 +254,7 @@ const Quiz = props => {
   );
 };
 
-export default Quiz;
+export default QuizScreen;
 const styles = StyleSheet.create({
   container: {
     height: '100%',

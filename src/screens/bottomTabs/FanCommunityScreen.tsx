@@ -10,7 +10,7 @@ import {useMe} from '../../hooks/useMe';
 import LayoutApp from '../../components/layout/LayoutApp';
 import {useTranslation} from 'react-i18next';
 
-const FanCommunity = () => {
+const FanCommunityScreen = () => {
   const {t} = useTranslation();
   const {paletteColor} = useTheme();
   const isFocused = useIsFocused();
@@ -104,4 +104,4 @@ const FanCommunity = () => {
   );
 };
 
-export default FanCommunity;
+export default FanCommunityScreen;

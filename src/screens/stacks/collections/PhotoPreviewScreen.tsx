@@ -1,13 +1,13 @@
 import {Animated, StyleSheet, View, TouchableOpacity} from 'react-native';
-import {screenHeight, screenWidth} from '../utils/constants';
+import {screenHeight, screenWidth} from '../../../utils/constants';
 import {useEffect, useRef, useState} from 'react';
-import AppIcon from '../components/common/AppIcon';
+import AppIcon from '../../../components/common/AppIcon';
 import {useNavigation} from '@react-navigation/native';
-import db from './../db/Database';
-import {useTheme} from '../contexts/ThemeContext';
-import PhotoView from '../components/Collection/PhotoView';
+import db from '../../../db/Database';
+import {useTheme} from '../../../contexts/ThemeContext';
+import PhotoView from '../../../components/Collection/PhotoView';
 
-const PhotoPreview = ({route}) => {
+const PhotoPreviewScreen = ({route}) => {
   const {paletteColor} = useTheme();
   const navigation = useNavigation();
   const {item, onRefreshPhoto} = route.params;
@@ -84,19 +84,14 @@ const PhotoPreview = ({route}) => {
         }}
         showsHorizontalScrollIndicator={false}>
         {items.map((item, index) => {
-          return (
-            <PhotoView
-              key={item.url}
-              photo={item}
-            />
-          );
+          return <PhotoView key={item.url} photo={item} />;
         })}
       </Animated.ScrollView>
     </View>
   );
 };
 
-export default PhotoPreview;
+export default PhotoPreviewScreen;
 
 const styles = StyleSheet.create({
   container: {

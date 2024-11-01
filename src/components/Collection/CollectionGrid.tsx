@@ -1,7 +1,11 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {Animated, StyleSheet, View, TouchableOpacity, Text} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import {COLLECTION_PHOTO_URL, screenWidth} from '../../utils/constants';
+import {
+  COLLECTION_PHOTO_URL,
+  ScreenName,
+  screenWidth,
+} from '../../utils/constants';
 import {useCollection} from '../../hooks/useCollection';
 import {useEffect, useMemo, useRef} from 'react';
 import {
@@ -38,7 +42,7 @@ const CollectionGrid = ({type, onPressPhoto}: CollectionGridProps) => {
       onPressPhoto(item);
       return;
     }
-    navigation.navigate('PhotoPreview', {
+    navigation.navigate(ScreenName.PhotoPreviewScreen, {
       item,
     });
   };

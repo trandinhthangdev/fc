@@ -12,7 +12,7 @@ export enum ETabView {
   tab_favorite = 'tab_favorite',
 }
 const width = screenWidth / 2 - 20;
-const Collection = () => {
+const CollectionScreen = () => {
   const {t} = useTranslation();
   const {paletteColor} = useTheme();
   const [tabView, setTabView] = useState(ETabView.tab_all);
@@ -102,7 +102,7 @@ const Collection = () => {
   );
 };
 
-export default Collection;
+export default CollectionScreen;
 const styles = StyleSheet.create({
   container: {},
   tab_list: {

@@ -19,7 +19,7 @@ import {LAST_UPDATED_PLAYLIST_URL, PLAYLIST_URL} from '../../utils/constants';
 import _ from 'lodash';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import StorageService from '../../db/StorageService';
-import {addTracks, setupPlayer} from '../trackPlayerServices';
+import {addTracks, setupPlayer} from '../stacks/playlist/trackPlayerServices';
 import TrackPlayer, {
   Event,
   RepeatMode,
@@ -33,7 +33,7 @@ import {useTranslation} from 'react-i18next';
 const LAST_FETCH_CODE = 'lastFetchCode';
 const NUMBER_PAGE = 20;
 
-const Playlist = () => {
+const PlaylistScreen = () => {
   const scrollRef = useRef<ScrollView>(null);
   const currentSong = useActiveTrack();
   const {t} = useTranslation();
@@ -222,7 +222,7 @@ const Playlist = () => {
   );
 };
 
-export default Playlist;
+export default PlaylistScreen;
 const styles = StyleSheet.create({
   container: {
     height: '100%',

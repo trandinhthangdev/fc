@@ -1,15 +1,15 @@
 import {Text, TouchableOpacity, View} from 'react-native';
-import AppIcon from '../components/common/AppIcon';
+import AppIcon from '../../../components/common/AppIcon';
 import {
   State,
   useActiveTrack,
   usePlaybackState,
 } from 'react-native-track-player';
-import {useTheme} from '../contexts/ThemeContext';
-import SongDetail from '../components/Playlist/SongDetail';
-import SongControl from '../components/Playlist/SongControl';
+import {useTheme} from '../../../contexts/ThemeContext';
+import SongDetail from '../../../components/Playlist/SongDetail';
+import SongControl from '../../../components/Playlist/SongControl';
 import {useNavigation} from '@react-navigation/native';
-import {screenHeight, screenWidth} from '../utils/constants';
+import {screenHeight, screenWidth} from '../../../utils/constants';
 
 const PlaySongScreen = () => {
   const navigation = useNavigation();

@@ -9,10 +9,10 @@ import {
   Image,
 } from 'react-native';
 import axios from 'axios';
-import {EThemeMode, useTheme} from '../../contexts/ThemeContext';
-import TypingAnimation from '../../components/TypingAnimation';
-import {CHAT_WITH_IDOL_API_URL} from '../../utils/constants';
-import AppIcon from '../../components/common/AppIcon';
+import {EThemeMode, useTheme} from '../../../contexts/ThemeContext';
+import TypingAnimation from '../../../components/TypingAnimation';
+import {CHAT_WITH_IDOL_API_URL} from '../../../utils/constants';
+import AppIcon from '../../../components/common/AppIcon';
 import {useNavigation} from '@react-navigation/native';
 
 type Message = {
@@ -21,7 +21,7 @@ type Message = {
   text: string;
 };
 
-const IdolChatBox = () => {
+const IdolChatBoxScreen = () => {
   const navigation = useNavigation();
   const {themeColor, paletteColor} = useTheme();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -113,7 +113,7 @@ const IdolChatBox = () => {
             {message.sender === 'idol' && (
               <Image
                 style={styles.message_avatar}
-                source={require('./../../assets/jack.jpeg')}
+                source={require('./../../../assets/jack.jpeg')}
               />
             )}
             <View
@@ -252,4 +252,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default IdolChatBox;
+export default IdolChatBoxScreen;

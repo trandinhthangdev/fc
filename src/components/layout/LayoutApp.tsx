@@ -1,12 +1,22 @@
-import {Text, View} from 'react-native';
+import {Text, View, ViewStyle} from 'react-native';
 import {useTheme} from '../../contexts/ThemeContext';
-import {useRoute} from '@react-navigation/native';
 import SwitchMode from '../common/SwitchMode';
-import {ScrollView} from 'react-native-gesture-handler';
 
-const LayoutApp = ({title, children, customStyle, left}) => {
+interface LayoutAppProps {
+  title: string;
+  children: React.ReactNode;
+  customStyle?: ViewStyle;
+  left?: React.ReactNode;
+}
+
+const LayoutApp: React.FC<LayoutAppProps> = ({
+  title,
+  children,
+  customStyle,
+  left,
+}) => {
   const {paletteColor} = useTheme();
-  const route = useRoute();
+
   return (
     <View
       style={{
@@ -22,7 +32,6 @@ const LayoutApp = ({title, children, customStyle, left}) => {
           justifyContent: 'center',
           alignItems: 'center',
           padding: 8,
-          // backgroundColor: 'red',
         }}>
         {left && (
           <View

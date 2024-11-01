@@ -12,7 +12,7 @@ import AppIcon from '../../components/common/AppIcon';
 import {ScrollView} from 'react-native-gesture-handler';
 import LayoutApp from '../../components/layout/LayoutApp';
 import {useTranslation} from 'react-i18next';
-const Info = props => {
+const InfoScreen = props => {
   const {t} = useTranslation();
   const {themeColor, paletteColor} = useTheme();
   const openLink = async (url: string) => {
@@ -123,7 +123,7 @@ const Info = props => {
   );
 };
 
-export default Info;
+export default InfoScreen;
 const styles = StyleSheet.create({
   container: {
     height: '100%',
